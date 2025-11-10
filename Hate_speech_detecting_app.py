@@ -2,26 +2,49 @@ import os
 import streamlit as st
 import pickle
 import pandas as pd
+import joblib
 import re, string, unicodedata
 
 # ==============================
 # Load model and vectorizer
 # ==============================
+# ==============================
+# File paths
+# ==============================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILE = os.path.join(BASE_DIR, "hate_speech_model.pkl")
+VECTORIZER_FILE = os.path.join(BASE_DIR, "tfidf_vectorizer.pkl")
 
-model_path = os.path.join(BASE_DIR, "hate_speech_model.pkl")
-vectorizer_path = os.path.join(BASE_DIR, "tfidf_vectorizer.pkl")
+# ==============================
+# Function to safely load pickle/joblib files
+# ==============================
+def load_model(path, use_joblib=False):
+    try:
+        if use_joblib:
+            obj = joblib.load(path)
+        else:
+            with open(path, "rb") as f:
+                obj = pickle.load(f)
+        # st.success(f"✅ Loaded: {os.path.basename(path)}")
+        return obj
+    except FileNotFoundError:
+        st.error(f"❌ File not found: {path}")
+    except ModuleNotFoundError as e:
+        st.error(f"❌ Missing module while loading pickle: {e.name}")
+    except Exception as e:
+        st.error(f"❌ Error loading file '{os.path.basename(path)}': {e}")
+    return None
 
-# Debug info (optional)
-# st.write("Model path:", model_path)
-# st.write("Vectorizer path:", vectorizer_path)
-
+# ==============================
 # Load model and vectorizer
-with open(model_path, "rb") as f:
-    model = pickle.load(f)
+# ==============================
+# If your model/vectorizer is from scikit-learn, use_joblib=True is recommended
+model = load_model(MODEL_FILE, use_joblib=True)
+vectorizer = load_model(VECTORIZER_FILE, use_joblib=True)
 
-with open(vectorizer_path, "rb") as f:
-    vectorizer = pickle.load(f)
+# Stop the app if loading failed
+if model is None or vectorizer is None:
+    st.stop()
 
 # ==============================
 # Page Config
