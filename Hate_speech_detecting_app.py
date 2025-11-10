@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pickle
 import pandas as pd
@@ -6,8 +7,21 @@ import re, string, unicodedata
 # ==============================
 # Load model and vectorizer
 # ==============================
-model = pickle.load(open("hate_speech_model.pkl", "rb"))
-vectorizer = pickle.load(open("tfidf_vectorizer.pkl", "rb"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model_path = os.path.join(BASE_DIR, "hate_speech_model.pkl")
+vectorizer_path = os.path.join(BASE_DIR, "tfidf_vectorizer.pkl")
+
+# Debug info (optional)
+# st.write("Model path:", model_path)
+# st.write("Vectorizer path:", vectorizer_path)
+
+# Load model and vectorizer
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
+
+with open(vectorizer_path, "rb") as f:
+    vectorizer = pickle.load(f)
 
 # ==============================
 # Page Config
