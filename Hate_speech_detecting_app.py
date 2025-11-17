@@ -14,7 +14,7 @@ from scipy import sparse
 # Page / App Config
 # -------------------------------
 st.set_page_config(
-    page_title="Anti-India / Hate Speech Detector",
+    page_title="Anti-India / Hate Speech Detector ",
     page_icon="🚨",
     layout="centered",
     initial_sidebar_state="expanded",
